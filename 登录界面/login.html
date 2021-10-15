@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="./css/font-awesome-4.7.0/css/font-awesome.min.css">
+    <style>
+        *{
+            margin: 0;
+            padding: 0;
+        }
+        input{
+            outline: none;
+        }
+        body{
+            background: url(./images/bg1.jpg) no-repeat center;
+            background-attachment: fixed;
+            background-size: cover;
+            /* 这里的过渡时间注意要小于setInterval的时间，防止最后一个片段切换时不会出现过渡效果 */
+            transition:all 4s;
+        }
+
+        #outer{
+            width: 120px;
+            height: 60px;
+            overflow: hidden;
+            border-radius: 6px;
+            float: right;
+            margin-top: 10px;
+            margin-right: 10px;
+            position: relative;
+            cursor: pointer;
+        }
+        .login_bg{
+            width: 240px;
+            height: 60px;
+            /* background-image: linear-gradient(301deg, #69EACB 0%, #EACCF8 30%, #6654F1 60%,#69EACB 90%); */
+            background: linear-gradient(115deg,#4fcf70,#fad648,#a767e5,#12bcfe,#44ce7b);
+            background-size: 50% 100%;
+            position: absolute;
+        }
+        #outer:hover .login_bg{
+            animation:move 1s infinite;
+            animation-timing-function:linear;
+            /* Safari and Chrome */
+            -webkit-animation:move 1s infinite;
+            -webkit-animation-timing-function:linear;
+        }
+        @keyframes move{
+            from {left:0px;}
+            to {left:-120px;}
+        }
+        /* Safari and Chrome */
+        @-webkit-keyframes move {
+            from {left:0px;}
+            to {left:-120px;}
+        }
+        #login{
+            width: 110px;
+            height: 50px;
+            background: rgba(0, 0, 0, .9);
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: white;
+            text-align: center;
+            line-height: 50px;
+            font-size: 20px;
+            border-radius: 3px;
+        }
+
+        #user_info{
+            min-width: 35%;
+            min-height: 55%;
+            background: rgba(0, 0, 0, .6);
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            /* opacity搭配visibility */
+            /* opacity主要是让登录界面出现，消失，再用visibility把输入框、按钮点击事件隐藏掉，不然会有交互
+                不单独使用visibility，主要是因为登录界面里面嵌套的一些子元素隐藏时会有卡顿
+             */
+            opacity: 0;
+            visibility: hidden;
+            transition: .5s;
+        }
+        .title{
+            width: 154px;
+            text-align: center;
+            margin: 20px auto;
+        }
+        .title h1{
+            color: white;
+            padding-bottom: 10px;
+            border-bottom: 4px solid #005bff;
+        }
+
+        #cancel{
+            width: 30px;
+            height: 30px;
+            float: right;
+            /* background: #000; */
+            text-align: center;
+            cursor: pointer;
+            transition: .2s;
+        }
+        .cancel{
+            font-size: 30px;
+            line-height: 30px;
+        }
+        #cancel:hover{
+            background: rgb(218, 17, 17);
+        }
+
+        .input{
+            width: 250px;
+            text-align: center;
+            margin: 20px auto;
+            position: relative;
+        }
+        #username,#password{
+            width: 100%;
+            height: 40px;
+            border-radius: 5px;
+            margin: 20px 0;
+            padding-left: 30px;
+            margin-left: -15px;
+            border: none;
+            border: 1px solid white;
+            background: rgba(0, 0, 0, .5);
+            color: white;
+        }
+        .fa{
+            color: white;
+        }
+        .account{
+            position: absolute;
+            top: 32px;
+        }
+        .lock{
+            position: absolute;
+            top: 114px;
+        }
+        .btn{
+            text-align: center;
+        }
+        #btn{
+            color: white;
+            background-image: linear-gradient(to top, #48c6ef 0%, #6f86d6 100%);
+            width: 175px;
+            height: 40px;
+            border: none;
+            border-radius: 40px;
+            cursor: pointer;
+            transition: .2s;
+        }
+        #btn:hover{
+            box-shadow: 0 0 10px rgb(110, 163, 231);
+        }
+
+        .message{
+            width: 500px;
+            height: 50px;
+            /* background: rgb(100, 100, 124); */
+            margin: 15px 20px;
+            position: relative;
+        }
+        label{
+            color: white;
+            position: absolute;
+            left: 0;
+            bottom: 0;
+            cursor: pointer;
+            transition: .2s;
+        }
+        label:hover{
+            color: rgba(255, 255, 255, 0.8);
+        }
+        #smile,#sad{
+            width: 50px;
+            height: 50px;
+            /* background: pink; */
+            margin: auto;
+            display: none;
+            /* 
+                display: none;元素还在dom层，但是在random层(渲染层)不会渲染该元素
+                display会导致过渡没有效果，因为display: none造成元素脱离文档流，过渡属性无法对一个页面上不渲染的元素生效，
+                建议使用visibility: hidden或者opacity: 0 
+             */
+            /* transition: 2s; */
+        }
+        img{
+            display: block;
+            width: 100%;
+            height: 100%;
+        }
+    </style>
+</head>
+<body>
+    <!-- login按钮 -->
+    <div id="outer">
+        <div class="login_bg"></div>
+        <div id="login" onclick="login_interface()">Login</div>
+    </div>
+
+    <!-- 登录界面 -->
+    <div id="user_info">
+        <div id="cancel" onclick="cancel()">
+            <i class="fa fa-times cancel" aria-hidden="true"></i>
+        </div>
+        <!-- 登录界面标题 -->
+        <div class="title">
+            <h1>Face Web</h1>
+        </div>
+        <!-- 用户名密码输入框 -->
+        <div class="input">
+            <i class="fa fa-user account" aria-hidden="true"></i>
+            <input type="text" id="username" placeholder="请输入用户名" autocomplete="off">
+            <i class="fa fa-unlock-alt lock" aria-hidden="true"></i>
+            <input type="password" id="password" placeholder="请输入密码">
+        </div>
+
+        <!-- 按钮 -->
+        <div class="btn">
+            <input type="button" id="btn" value="安全登录" onclick="login()">
+        </div>
+
+        <!-- message -->
+        <div class="message">
+            <label>注册账号</label>
+            <div id="smile">
+                <img src="./images/smile.png" alt="">
+            </div>
+            <div id="sad">
+                <img src="./images/sad.png" alt="">
+            </div>
+        </div>
+    </div>
+
+
+    <script>
+        // 背景图的切换
+        /*  
+        + 方法很多，更改类名也可以
+        + 如果不使用数组并且图片后缀名统一，使用字符串拼接，i就是每个图的序号(bg后面的数字)
+            - bg.style.backgroundImage = 'url(./images/bg' + 'i' + '.jpg)'
+        */
+        var bg = document.body
+        // 把图片路径放到一个数组里面
+        var bgArr = ['url(./images/bg1.jpg)', 'url(./images/bg2.png)', 'url(./images/bg3.jpg)', 'url(./images/bg4.jpg)', 'url(./images/bg5.jpg)']
+        var i = 0
+        // 使用一个周期方法并将i初始化
+        setInterval(
+            function() {
+            i++
+            if (i == bgArr.length) {
+                i = 0
+            }
+            bg.style.backgroundImage = bgArr[i]
+            }, 5000
+        )
+
+        // 弹出登录界面
+        function login_interface() {
+            setTimeout(
+                function() {
+                    user_info.style.opacity = '1'
+                    user_info.style.visibility = 'visible'
+                }, 800
+            )
+        }
+
+        // 取消登录
+        function cancel() {
+            setTimeout(
+                function() {
+                    user_info.style.opacity = '0'
+                    user_info.style.visibility = 'hidden'
+                    // 取消登录之后，确保表情只有在点击之后才会再次出现
+                    smile.style.display = 'none'
+                    sad.style.display = 'none'
+                }, 800
+            )
+        }
+
+        // 登录验证及跳转
+        function login() {
+            if (username.value == ''  || password.value == '') {
+                smile.style.display = 'none'
+                sad.style.display = 'block'
+                return
+            }
+            if (username.value == 'admin' && password.value == '123') {
+                sad.style.display = 'none'
+                smile.style.display = 'block'
+                setTimeout(
+                    function() {
+                        // url传值注意不要有空格，避免传过去会有一些其他字符
+                        window.location.href = './index.html?username='+username.value+'&password='+password.value
+                    }, 1000
+                )
+            } else {
+                smile.style.display = 'none'
+                sad.style.display = 'block'
+            }
+        }
+    </script>
+</body>
+</html>

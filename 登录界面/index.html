@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        *{
+            margin: 0;
+            padding: 0;
+        }
+        center{
+            width: 50%;
+            height: 40px;
+            background: rgba(111, 149, 207, 0.4);
+            border-radius: 1rem;
+            color: black;
+            font-size: 20px;
+            line-height: 40px;
+            margin: 20px auto 0;
+            transition: 3s;
+        }
+    </style>
+</head>
+<body>
+    <center id="hello_disappear">
+        hello，
+        <span id="uname"></span>
+    </center>
+
+
+    <script>
+        // 提取出用户名，主要靠window.location.href,上一个页面提前写好的字符串
+        // 先找到？索引值,然后从?后面一个截取
+        var index = window.location.href.indexOf('?')
+        index++
+        // 将它转变成数组  [‘username=admin', 'password=123']
+        var user_info = window.location.href.substring(index).split('&')
+        /* 
+            + 提取出'username=admin',找到'='对应的索引号，加1就可以截取出用户名  user_info[0].indexOf('=')++
+                - 为什么加1而不是自增，最开始使用了自增，发现报错，自增是针对某个变量，
+                这里user_info[0].indexOf('=')没给它声明一个变量接收这个值
+        */
+        uname.innerText = user_info[0].substring(user_info[0].indexOf('=')+1)
+
+        setTimeout(
+            function() {
+                hello_disappear.style.opacity = '0'
+                hello_disappear.style.visibility = 'hidden'
+            }, 2000
+        )
+    </script>
+</body>
+</html>
